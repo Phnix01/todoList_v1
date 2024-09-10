@@ -21,6 +21,21 @@ class _HomeScreensState extends State<HomeScreens> {
     });
   }
 
+  final _textController = TextEditingController();
+
+  void saveNewTask() {
+    setState(() {
+      toDoList.add([_textController.text, false]);
+      _textController.clear();
+    });
+  }
+
+  void deleteTask(int index) {
+    setState(() {
+      toDoList.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +56,39 @@ class _HomeScreensState extends State<HomeScreens> {
             taskName: toDoList[index][0],
             isCompleted: toDoList[index][1],
             onChanged: (bool? value) {
-              onChanged(index, value); // Passe la nouvelle valeur à `onChanged`
+              onChanged(index, value);
             },
+            deleteFunction: (context) {
+              deleteTask(index);
+            }, // Passe le context pour `Slidable`
           );
         },
+      ),
+      floatingActionButton: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: TextField(
+                controller: _textController,
+                decoration: InputDecoration(
+                  hintText: 'Ajouter une nouvelle tâche',
+                  hintFadeDuration: Duration(microseconds: 300),
+                  filled: true,
+                  fillColor: Colors.deepPurple.shade200,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurple),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: saveNewTask,
+            child: Icon(Icons.add),
+          )
+        ],
       ),
     );
   }
